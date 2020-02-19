@@ -59,19 +59,27 @@ md일 경우 해당 박스가 8만큼 차지한다.(24/8 => 3개의 박스를 �
         <br />
         <Meta
           avatar={<Avatar src={video.writer.image} />}
-          title={<a href={`/video/${video._id}`}>{video.title}</a>}
+          title={
+            <a style={{ color: "black" }} href={`/video/${video._id}`}>
+              {video.title}
+            </a>
+          }
         />
         <span>{video.writer.name}</span>
         <br />
-        <span style={{ marginLeft: "3rem" }}> 0 views - </span>
-        <span>{moment(video.createdAt).format("YY MMM Do")}</span>
+        <span style={{ marginLeft: "3rem" }}>
+          조회수 {video.views} &nbsp; &nbsp;업로드&nbsp;
+        </span>
+        <span>{moment(video.createdAt).format("MMM Do")}</span>
       </Col>
     );
   });
 
   return (
     <div style={{ width: "85%", margin: "3rem auto" }}>
-      <Title level={2}>추천 영상</Title>
+      <Title level={2} style={{ color: "gray" }}>
+        추천 영상
+      </Title>
       <hr />
       <Row gutter={16}>{renderCards}</Row> {/* gutter는 Row간의 간격 */}
     </div>

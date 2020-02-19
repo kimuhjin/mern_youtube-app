@@ -47,7 +47,7 @@ function LoginPage(props) {
           dispatch(loginUser(dataToSubmit))
             .then(response => {
               if (response.payload.loginSuccess) {
-                window.localStorage.setItem("userId", response.payload.userId);
+                window.localStorage.setItem("userId", response.payload.userId); //userId는 로컬저장소에 저장한다.
                 if (rememberMe === true) {
                   window.localStorage.setItem("rememberMe", values.id);
                 } else {

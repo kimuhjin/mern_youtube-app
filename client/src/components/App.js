@@ -9,6 +9,7 @@ import NavBar from "./views/NavBar/NavBar";
 import Footer from "./views/Footer/Footer";
 import UploadVideoPage from "./views/UploadVideoPage/UploadVideoPage";
 import DetailVideoPage from "./views/DetailVideoPage/DetailVideoPage";
+import SubscriptionPage from "./views/SubscriptionPage/SubscriptionPage";
 
 function App() {
   return (
@@ -34,6 +35,11 @@ function App() {
             exact
             path="/video/:videoId" // path중 ':'를 붙이면 해당 쿼리값이 들어가게된다.
             component={Auth(DetailVideoPage, null)}
+          />
+          <Route
+            exact
+            path="/subscription"
+            component={Auth(SubscriptionPage, null)}
           />
         </Switch>
       </div>

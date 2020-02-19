@@ -32,7 +32,7 @@ const videoSchema = mongoose.Schema(
       type: String
     }
   },
-  { timestamps: true } // 자동으로 App value를 Update or Create 한다.
+  { timestamps: true } // 자동으로 Update or Create 시간대를 추가해준다.
 );
 
 const Video = mongoose.model("Video", videoSchema);

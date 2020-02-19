@@ -37,6 +37,7 @@ app.use(cookieParser());
 
 app.use("/api/users", require("./routes/users"));
 app.use("/api/video", require("./routes/video")); // '/api/video'를 쓰면, 자동으로 routes/video 경로로 지정해준다.
+app.use("/api/subscribe", require("./routes/subscribe"));
 
 //use this to show the image you have in node js server to client (react js)
 //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client

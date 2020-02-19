@@ -4,11 +4,12 @@ const multer = require("multer");
 var ffmpeg = require("fluent-ffmpeg"); //썸네일 생성 라이브러리
 const { User } = require("../models/User");
 const { Video } = require("../models/Video");
-
+const { Subscriber } = require("../models/Subscriber");
 const { auth } = require("../middleware/auth");
+// models에 있는 export한 파일들을 require한다.
 
 //==============================//
-//             User             //
+//             video            //
 //==============================//
 //요청객체 req와 응답객체 res는 express.js 라우트의 속성이다.
 var storage = multer.diskStorage({
@@ -108,6 +109,26 @@ router.post("/getVideo", (req, res) => {
       if (err) return res.status(400).send(err);
       res.status(200).json({ success: true, video }); // 담아온 정보를 video 변수에 담아 status 200이면 success: true와 함께 응답해준다.
     });
+});
+
+router.post("/getSubscriptionVideos", (req, res) => {
+  //DB에 subscriber Collection에 있는 모든 데이터들을 Find 하고, Find한 모든 비디오들을 Fetch한다.
+  Subscriber.find({ userFrom: req.body.userFrom }).exec((err, subscribers) => {
+    if (err) return res.status(400).send(err); //err라면 Http 400 bad request를 나타내고 err를 전달한다.
+    let subscribedUser = []; // 현재 구독되고 있는 User들의 이름만 받아오면 되기 때문에 array로 받는다.
+    subscribers.map((subscriber, i) => {
+      subscribedUser.push(subscriber.userTo); // subscriberUser array에 userTo 정보를 push 해준다.
+    });
+    // 위에서 찾은 유저에게 해당되는 모든 비디오들을 fetch(가져온다).
+    Video.find({ writer: { $in: subscribedUser } }) //여기서 $in을 쓰는 이유는 .find를 할 때, $in이 subscriberUser 안에 모든 writer의 정보를 가져올 수 있기 때문이다.
+      //$in을 쓰지 않으면 writer정보를 개별적으로 전부 입력 해줘야한다.
+      .populate("writer")
+      .exec((err, videos) => {
+        //여기서 videos는 유저가 구독하고있는 모든 피구독유저에 관한 도큐먼트이다.
+        if (err) return res.status(400).send(err);
+        res.status(200).json({ success: true, videos });
+      });
+  });
 });
 
 module.exports = router;
