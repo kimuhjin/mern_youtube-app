@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { List, Avatar, Typography, Row, Col, Spin, Icon } from "antd";
+import { List, Avatar, Row, Col, Icon } from "antd";
 import Axios from "axios";
 import SideVideo from "../DetailVideoPage/Sections/SideVideo";
 import Subscriber from "../DetailVideoPage/Sections/Subscriber";
 import Comments from "../DetailVideoPage/Sections/Comments";
+import LikeDislikes from "./Sections/LikeDislikes";
 
 function DetailVideoPage(props) {
   const [Video, setVideo] = useState([]);
+  const [CommentLists, setCommentLists] = useState([]);
   const videoId = props.match.params.videoId; // 현재 URL의 videoId 값 추출, '.videoId'인 이유는 App.js에 path에 /:videoId로 맞춰주었기 때문이다.
 
   const videoVariable = {
@@ -20,7 +22,22 @@ function DetailVideoPage(props) {
         alert("Failed to get video Info");
       }
     });
+
+    Axios.post("/api/comment/getComments", videoVariable).then(response => {
+      if (response.data.success) {
+        console.log(response.data.comments);
+        setCommentLists(response.data.comments);
+      } else {
+        alert("Failed to get video Info");
+      }
+    });
   }, []);
+
+  const updateComment = newComment => {
+    setCommentLists(CommentLists.concat(newComment)); // 밑에 <Comment/>에서 props로 받아온 데이터를 updateComment의 파라미터로 사용한다.
+    // 파라미터로 받아온 데이터를 concat을 통해 commentLists에 추가해주고, 그 array들을 setCommentLists에 setState한다.
+  };
+
   if (Video.writer) {
     /* if문으로 Return을 감싸준 이유는 밑에 <Subscribe>에서 Video.writer._id를 가져오는 속도가 '렌더링 되는 속도보다 느리기 때문에' 
   if문을 이용하여 Video.writer 데이터가 존재하면 그 다음에 Return이 동작하여 렌더링 하게 하였다. */
@@ -38,6 +55,11 @@ function DetailVideoPage(props) {
             ></video>
             <List.Item //antd에서 actions를 통해 액션을 컨트롤 한다.
               actions={[
+                <LikeDislikes
+                  video
+                  videoId={videoId}
+                  userId={localStorage.getItem("userId")}
+                />,
                 <Subscriber
                   userTo={Video.writer._id}
                   userFrom={localStorage.getItem("userId")}
@@ -53,7 +75,13 @@ function DetailVideoPage(props) {
                 description={Video.description}
               />
             </List.Item>
-            <Comments /> {/* 댓글 기능 섹션 */}
+            {/* 댓글 기능 섹션 */}
+            <Comments
+              CommentLists={CommentLists} // 위에서 새로 저장한 CommentLists array를 Comments props로 전달한다.
+              postId={Video._id}
+              refreshFunction={updateComment}
+            />
+            {/* Video._id를 postId에 담아 props로 넘겨준다. */}
           </div>
         </Col>
         <Col lg={6} xs={24}>

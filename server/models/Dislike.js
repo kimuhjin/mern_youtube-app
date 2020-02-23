@@ -1,27 +1,24 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const commentSchema = mongoose.Schema(
+const dislikeSchema = mongoose.Schema(
   {
-    writer: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User"
     },
-    postId: {
+    commentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Comment"
+    },
+    videoId: {
       type: Schema.Types.ObjectId,
       ref: "Video"
-    },
-    responseTo: {
-      type: Schema.Types.ObjectId,
-      ref: "User"
-    },
-    content: {
-      type: String
     }
   },
   { timestamps: true }
 ); // 자동으로 App value를 Update or Create 한다.;
 
-const Comment = mongoose.model("Comment", commentSchema);
+const Dislike = mongoose.model("Dislike", dislikeSchema);
 
-module.exports = { Comment };
+module.exports = { Dislike };
